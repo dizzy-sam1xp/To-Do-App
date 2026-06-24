@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nova Tasks</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="scene" aria-hidden="true">
+    <div class="ambient ambient--one" data-parallax-depth="12"></div>
+    <div class="ambient ambient--two" data-parallax-depth="18"></div>
+    <div class="ambient ambient--three" data-parallax-depth="8"></div>
+    <div id="particles" class="particles"></div>
+    <div id="bubbles" class="bubbles"></div>
+    <div class="mesh"></div>
+  </div>
+
+  <div id="bootSplash" class="boot-splash">
+    <div class="boot-mark">
+      <span class="boot-pill">Nova Tasks</span>
+      <h1>Launching your command deck</h1>
+      <div class="boot-bars" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+
+  <main class="app-shell">
+    <section class="hero panel" data-parallax-depth="6">
+      <div class="hero-copy">
+        <span class="eyebrow">Focus Console</span>
+        <h1 id="welcomeHeading">Turn scattered tasks into calm momentum.</h1>
+        <p class="hero-text">
+          A tactile to-do workspace with premium depth, fast interactions, and just
+          enough structure to keep the day moving.
+        </p>
+        <div class="hero-meta">
+          <span class="meta-chip" id="liveDate">Today</span>
+          <span class="meta-chip" id="taskCounter">0 tasks live</span>
+          <span class="meta-chip" id="activeFocusChip">0 in focus</span>
+        </div>
+      </div>
+
+      <div class="hero-progress">
+        <div class="ring-cluster">
+          <svg class="progress-ring" viewBox="0 0 140 140" aria-hidden="true">
+            <circle class="progress-ring__track" cx="70" cy="70" r="54"></circle>
+            <circle class="progress-ring__value" id="progressRingValue" cx="70" cy="70" r="54"></circle>
+          </svg>
+          <div class="ring-center">
+            <strong id="completionPercent">0%</strong>
+            <span>complete</span>
+          </div>
+        </div>
+        <div class="progress-copy">
+          <span class="eyebrow eyebrow--soft">Today's progress</span>
+          <h2 id="progressHeadline">Ready when you are</h2>
+          <p id="progressMessage">Add your first task to start the session.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-grid" aria-label="Productivity overview">
+      <article class="stat-card" data-parallax-depth="10">
+        <span class="stat-card__label">Queued</span>
+        <strong class="stat-card__value" id="totalTasksValue">0</strong>
+        <span class="stat-card__meta">Total tasks in the deck</span>
+      </article>
+      <article class="stat-card" data-parallax-depth="14">
+        <span class="stat-card__label">Remaining</span>
+        <strong class="stat-card__value" id="remainingTasksValue">0</strong>
+        <span class="stat-card__meta">Still waiting for attention</span>
+      </article>
+      <article class="stat-card" data-parallax-depth="18">
+        <span class="stat-card__label">Completed Today</span>
+        <strong class="stat-card__value" id="completedTodayValue">0</strong>
+        <span class="stat-card__meta">Finished in the current day</span>
+      </article>
+      <article class="stat-card" data-parallax-depth="12">
+        <span class="stat-card__label">Focus Streak</span>
+        <strong class="stat-card__value" id="streakValue">0</strong>
+        <span class="stat-card__meta">Consecutive days with wins</span>
+      </article>
+    </section>
+
+    <section class="composer panel" data-parallax-depth="9">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow eyebrow--soft">Quick capture</span>
+          <h2>Build a new task</h2>
+        </div>
+        <button class="key-button key-button--ghost" id="clearComposer" type="button" data-magnetic>
+          Reset
+        </button>
+      </div>
+
+      <form id="taskForm" class="composer-form">
+        <label class="field field--command">
+          <span class="field__label">Task name</span>
+          <input
+            id="taskTitle"
+            name="taskTitle"
+            type="text"
+            maxlength="80"
+            autocomplete="off"
+            placeholder="What needs your attention?"
+          >
+        </label>
+
+        <div class="composer-grid">
+          <label class="field field--notes">
+            <span class="field__label">Notes</span>
+            <textarea
+              id="taskDetails"
+              name="taskDetails"
+              maxlength="220"
+              rows="5"
+              placeholder="Optional context, next step, or reminder."
+            ></textarea>
+          </label>
+
+          <div class="composer-side">
+            <div class="field">
+              <span class="field__label">Priority</span>
+              <div id="prioritySelector" class="priority-selector" role="group" aria-label="Select priority">
+                <button class="priority-key priority-key--low" type="button" data-priority="low" data-magnetic>Low</button>
+                <button class="priority-key priority-key--medium is-active" type="button" data-priority="medium" data-magnetic>Medium</button>
+                <button class="priority-key priority-key--high" type="button" data-priority="high" data-magnetic>High</button>
+              </div>
+            </div>
+
+            <div class="composer-actions">
+              <button class="key-button key-button--primary" type="submit" data-magnetic>
+                Add Task
+              </button>
+              <p class="composer-note">Fast capture, rich details, zero clutter.</p>
+            </div>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <section class="controls panel" data-parallax-depth="7">
+      <div class="controls-group">
+        <span class="controls-label">Filter</span>
+        <div class="segmented-control" id="filterControl" role="tablist" aria-label="Task filters">
+          <button class="segment is-active" type="button" data-filter="all" data-magnetic>All</button>
+          <button class="segment" type="button" data-filter="active" data-magnetic>Active</button>
+          <button class="segment" type="button" data-filter="completed" data-magnetic>Completed</button>
+        </div>
+      </div>
+
+      <div class="controls-group controls-group--search">
+        <label class="search-field">
+          <span class="search-field__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M21 21l-4.35-4.35"></path>
+              <circle cx="11" cy="11" r="6"></circle>
+            </svg>
+          </span>
+          <input id="searchInput" type="search" autocomplete="off" placeholder="Search tasks">
+        </label>
+
+        <label class="sort-field">
+          <span class="controls-label">Sort</span>
+          <select id="sortSelect">
+            <option value="smart">Smart</option>
+            <option value="priority">Priority</option>
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="alpha">A-Z</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section class="task-section">
+      <div class="section-head section-head--tasks">
+        <div>
+          <span class="eyebrow eyebrow--soft">Task deck</span>
+          <h2>Floating work queue</h2>
+        </div>
+        <div class="section-summary">
+          <span id="remainingLabel">0 remaining</span>
+          <button class="key-button key-button--danger" id="resetTasksButton" type="button" data-magnetic>
+            Reset Task List
+          </button>
+        </div>
+      </div>
+
+      <ul id="taskList" class="task-list" aria-live="polite"></ul>
+
+      <div id="emptyState" class="empty-state" hidden>
+        <div class="empty-state__core">
+          <span class="empty-state__badge" id="emptyStateBadge">Clear runway</span>
+          <h3 id="emptyStateTitle">No tasks in view</h3>
+          <p id="emptyStateMessage">Capture something important above and it will appear here with full motion and controls.</p>
+          <div class="empty-state__actions">
+            <button class="key-button key-button--primary" id="emptyStatePrimaryAction" type="button" data-magnetic>
+              Create a Task
+            </button>
+            <button class="key-button key-button--ghost" id="emptyStateSecondaryAction" type="button" data-magnetic hidden>
+              Show All Tasks
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <details class="creator-drawer panel" data-parallax-depth="5">
+      <summary class="creator-drawer__summary">
+        <div class="creator-drawer__summary-main">
+          <span class="eyebrow eyebrow--soft">Creator</span>
+          <h2>Know the creator</h2>
+          <p>Open this panel to view contact details, profile links, and ownership credits.</p>
+        </div>
+
+        <span class="creator-drawer__summary-arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </span>
+      </summary>
+
+      <div class="creator-drawer__body">
+        <div class="site-footer__intro">
+          <span class="eyebrow eyebrow--soft">Profile</span>
+          <h2>Saksham Pawanchaudah</h2>
+          <p>
+            Frontend-focused builder crafting polished, modern product experiences with a sharp eye for feel and detail.
+          </p>
+        </div>
+
+        <div class="site-footer__links" aria-label="Contact links">
+          <a class="footer-link" href="mailto:saksham.pawan14@yahoo.com" data-magnetic>
+            <span class="footer-link__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+                <path d="m5 7 7 6 7-6"></path>
+              </svg>
+            </span>
+            <span class="footer-link__content">
+              <span class="footer-link__label">Email</span>
+              <span class="footer-link__value">saksham.pawan14@yahoo.com</span>
+            </span>
+          </a>
+
+          <a class="footer-link" href="https://www.linkedin.com/in/saksham-webdev" target="_blank" rel="noreferrer" data-magnetic>
+            <span class="footer-link__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <rect x="4" y="4" width="16" height="16" rx="4"></rect>
+                <path d="M8.2 10.1v5.7"></path>
+                <path d="M8.2 8.4h.01"></path>
+                <path d="M11.7 15.8v-3.2c0-1 .7-1.8 1.7-1.8s1.5.7 1.5 1.8v3.2"></path>
+                <path d="M11.7 12.3c0-1.4.9-2.2 2.2-2.2 1.4 0 2.3 1 2.3 2.8v2.9"></path>
+              </svg>
+            </span>
+            <span class="footer-link__content">
+              <span class="footer-link__label">LinkedIn</span>
+              <span class="footer-link__value">linkedin.com/in/saksham-webdev</span>
+            </span>
+          </a>
+
+          <a class="footer-link" href="https://github.com/dizzy-sam1xp" target="_blank" rel="noreferrer" data-magnetic>
+            <span class="footer-link__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3.8a8.2 8.2 0 0 0-2.6 16c.4.1.5-.2.5-.4V18c-2.2.5-2.7-.9-2.7-.9-.3-.8-.8-1-1.1-1.2-.9-.6.1-.6.1-.6 1 0 1.5 1 1.5 1 .9 1.5 2.4 1.1 3 .8.1-.6.4-1.1.7-1.3-1.8-.2-3.8-.9-3.8-4.2 0-.9.3-1.7 1-2.3-.1-.2-.4-1.1.1-2.2 0 0 .8-.3 2.5 1 .7-.2 1.4-.3 2.1-.3s1.4.1 2.1.3c1.7-1.2 2.5-1 2.5-1 .5 1.1.2 2 .1 2.2.6.6 1 1.4 1 2.3 0 3.3-2 4-3.8 4.2.3.3.7.8.7 1.7v2.5c0 .2.1.5.5.4A8.2 8.2 0 0 0 12 3.8Z"></path>
+              </svg>
+            </span>
+            <span class="footer-link__content">
+              <span class="footer-link__label">GitHub</span>
+              <span class="footer-link__value">github.com/dizzy-sam1xp</span>
+            </span>
+          </a>
+        </div>
+
+        <div class="creator-drawer__copyright">
+          <span>© <span id="footerYear">2026</span> Saksham Pawanchaudah. All rights reserved.</span>
+          <span>Designed and built by the creator of this experience.</span>
+        </div>
+      </div>
+    </details>
+  </main>
+
+  <div id="taskModal" class="modal-shell" hidden>
+    <div class="modal-backdrop" data-close-modal="task"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle">
+      <div class="modal-head">
+        <div>
+          <span class="eyebrow eyebrow--soft">Edit task</span>
+          <h2 id="taskModalTitle">Refine the details</h2>
+        </div>
+        <button class="icon-button" id="closeTaskModal" type="button" aria-label="Close edit modal">
+          <svg viewBox="0 0 24 24">
+            <path d="M6 6l12 12M18 6L6 18"></path>
+          </svg>
+        </button>
+      </div>
+
+      <form id="editTaskForm" class="modal-form">
+        <input id="editTaskId" type="hidden">
+
+        <label class="field">
+          <span class="field__label">Task name</span>
+          <input id="editTaskTitle" type="text" maxlength="80" autocomplete="off" placeholder="Task title">
+        </label>
+
+        <label class="field">
+          <span class="field__label">Notes</span>
+          <textarea id="editTaskDetails" maxlength="220" rows="5" placeholder="Optional notes"></textarea>
+        </label>
+
+        <div class="field">
+          <span class="field__label">Priority</span>
+          <div id="editPrioritySelector" class="priority-selector" role="group" aria-label="Edit priority">
+            <button class="priority-key priority-key--low" type="button" data-edit-priority="low">Low</button>
+            <button class="priority-key priority-key--medium is-active" type="button" data-edit-priority="medium">Medium</button>
+            <button class="priority-key priority-key--high" type="button" data-edit-priority="high">High</button>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="key-button key-button--ghost" id="cancelTaskModal" type="button">Cancel</button>
+          <button class="key-button key-button--primary" type="submit">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="confirmModal" class="modal-shell" hidden>
+    <div class="modal-backdrop" data-close-modal="confirm"></div>
+    <div class="modal-card modal-card--compact" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+      <div class="modal-head">
+        <div>
+          <span class="eyebrow eyebrow--soft" id="confirmModalEyebrow">Delete task</span>
+          <h2 id="confirmModalTitle">Remove this task?</h2>
+        </div>
+      </div>
+      <p class="confirm-copy" id="confirmModalCopy">
+        This removes the card from your deck and clears its progress state.
+      </p>
+      <div class="modal-actions">
+        <button class="key-button key-button--ghost" id="cancelDeleteButton" type="button">Keep It</button>
+        <button class="key-button key-button--danger" id="confirmDeleteButton" type="button">Delete Task</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastStack" class="toast-stack" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
